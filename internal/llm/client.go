@@ -16,7 +16,7 @@ import (
 )
 
 //go:embed commitmsg.prompt.yml
-var standupPromptYAML []byte
+var commitmsgPromptYAML []byte
 
 // PromptConfig represents the structure of the prompt configuration file
 // It includes the model parameters and the messages to be sent to the model.
@@ -154,7 +154,7 @@ func (c *Client) GenerateCommitMessage(
 
 func loadPromptConfig() (*PromptConfig, error) {
 	var config PromptConfig
-	err := yaml.Unmarshal(standupPromptYAML, &config)
+	err := yaml.Unmarshal(commitmsgPromptYAML, &config)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse prompt configuration: %w", err)
 	}

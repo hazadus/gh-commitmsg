@@ -10,7 +10,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const extensionName = "standup"
+const extensionName = "commitmsg"
 
 var (
 	flagLanguage string
