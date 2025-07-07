@@ -1,7 +1,7 @@
 # gh-commitmsg
 
-Идея приложения:
-- получить staged changes в git репозитории в текущей директории
-- скормить полученные данные LLM GitHub Models для генерации conventional commit message
-- вывести полученный commit message на экран
-- если будет хорошо получаться, можно в качестве примера для модели давать несколько предыдущих commit messages
+Tool idea:
+- get staged changes in the git repository in the current directory
+- feed the obtained data to the GitHub Models LLM to generate a conventional commit message
+- display the generated commit message on the screen
+- if it works well, we can provide several previous commit messages as examples for the model

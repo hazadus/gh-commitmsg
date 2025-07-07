@@ -1,4 +1,4 @@
-// Package git предоставляет функции для работы с git репозиториями
+// Package git contains functions to interact with git repositories
 package git
 
 import (
@@ -6,24 +6,24 @@ import (
 	"os/exec"
 )
 
-// GetStagedChanges выполняет команду git diff --staged и возвращает её вывод
+// GetStagedChanges executes the command git diff --staged and returns its output
 func GetStagedChanges() (string, error) {
-	// Проверяем, что мы находимся в git репозитории
+	// Check if we are in a git repository
 	if !isGitRepository() {
-		return "", fmt.Errorf("текущая директория не является git репозиторием")
+		return "", fmt.Errorf("current directory is not a git repository")
 	}
 
-	// Выполняем команду git diff --staged
+	// Execute the command git diff --staged
 	cmd := exec.Command("git", "diff", "--staged")
 	output, err := cmd.Output()
 	if err != nil {
-		return "", fmt.Errorf("ошибка при выполнении git diff --staged: %v", err)
+		return "", fmt.Errorf("error executing git diff --staged: %v", err)
 	}
 
 	return string(output), nil
 }
 
-// isGitRepository проверяет, является ли текущая директория git репозиторием
+// isGitRepository checks if the current directory is a git repository
 func isGitRepository() bool {
 	cmd := exec.Command("git", "rev-parse", "--is-inside-work-tree")
 	err := cmd.Run()
