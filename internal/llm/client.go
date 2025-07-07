@@ -88,7 +88,11 @@ func NewClient() (*Client, error) {
 }
 
 // GenerateCommitMessage generates a commit message based on the provided changes summary
-func (c *Client) GenerateCommitMessage(changesSummary string, language string) (string, error) {
+func (c *Client) GenerateCommitMessage(
+	changesSummary string,
+	language string,
+	examples string,
+) (string, error) {
 	fmt.Print("  Loading prompt configuration... ")
 	promptConfig, err := loadPromptConfig()
 	if err != nil {
@@ -110,6 +114,14 @@ func (c *Client) GenerateCommitMessage(changesSummary string, language string) (
 		// Replace the template variables
 		content = strings.ReplaceAll(content, "{{changes}}", changesSummary)
 		content = strings.ReplaceAll(content, "{{language}}", selectedLanguage)
+
+		if examples != "" && strings.Contains(content, "{{examples}}") {
+			// If examples are provided, replace the {{examples}} placeholder
+			content = strings.ReplaceAll(content, "{{examples}}", createExamplesString(examples))
+		} else {
+			// If no examples are provided, remove the {{examples}} placeholder
+			content = strings.ReplaceAll(content, "{{examples}}", "")
+		}
 
 		messages[i] = Message{
 			Role:    msg.Role,
@@ -187,4 +199,12 @@ func (c *Client) callGitHubModels(request Request) (*Response, error) {
 	}
 
 	return &response, nil
+}
+
+func createExamplesString(examples string) string {
+	if examples == "" {
+		return ""
+	}
+	
+	return fmt.Sprintf("Here are some examples of good commit messages used previously in project:\n%s", examples)
 }

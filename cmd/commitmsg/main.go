@@ -14,6 +14,7 @@ const extensionName = "standup"
 
 var (
 	flagLanguage string
+	flagExamples bool
 )
 var rootCmd = &cobra.Command{
 	Use:   extensionName,
@@ -24,6 +25,7 @@ var rootCmd = &cobra.Command{
 
 func init() {
 	rootCmd.Flags().StringVarP(&flagLanguage, "language", "l", "english", "Language to generate commit message in")
+	rootCmd.Flags().BoolVarP(&flagExamples, "examples", "e", false, "Add examples of commit messages to context")
 }
 
 func main() {
@@ -38,10 +40,19 @@ func runCommitMsg(_ *cobra.Command, _ []string) error {
 	if err != nil {
 		return fmt.Errorf("failed to get staged changes: %w", err)
 	}
-
+	
 	if stagedChanges == "" {
 		fmt.Println("No staged changes in the repository.")
 		return nil
+	}
+
+	latestCommitMessages := ""
+	if flagExamples{
+		latestCommitMessages, err = git.GetCommitMessages(3)
+		if err != nil {
+			return fmt.Errorf("failed to get latest commit messages: %w", err)
+		}
+		fmt.Println("  Adding examples of previous commit messages to context")
 	}
 
 	llmClient, err := llm.NewClient()
@@ -49,12 +60,13 @@ func runCommitMsg(_ *cobra.Command, _ []string) error {
 		return fmt.Errorf("failed to create LLM client: %w", err)
 	}
 
-	commitMsg, err := llmClient.GenerateCommitMessage(stagedChanges, flagLanguage)
+	fmt.Println("  Language for commit message:", flagLanguage)
+	commitMsg, err := llmClient.GenerateCommitMessage(stagedChanges, flagLanguage, latestCommitMessages)
 	if err != nil {
 		return fmt.Errorf("failed to generate commit message: %w", err)
 	}
 
-	fmt.Println("Generated commit message:")
+	fmt.Println("💬 Generated commit message:")
 	fmt.Println(commitMsg)
 	return nil
 }

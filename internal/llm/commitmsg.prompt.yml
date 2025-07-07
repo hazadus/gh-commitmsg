@@ -26,6 +26,8 @@ messages:
       - Be concise but informative
 
       - Use bullet points for clarity
+
+      {{examples}}
   - role: user
     content: |
       Based on the following changes, generate a conventional commit message:
