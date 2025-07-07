@@ -1,6 +1,7 @@
 name: Commit Message Generator
 description: Generates professional commit messages based on git changes
 model: openai/gpt-4o
+language: english
 messages:
   - role: system
     content: >
@@ -9,6 +10,8 @@ messages:
       Your task is to create a concise, well-structured commit message that
       follows "conventional commits" style. The message should be clear,
       informative, and suitable for a professional software development context.
+
+      Write in {{language}} language.
 
       Guidelines:
 

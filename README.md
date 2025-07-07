@@ -5,3 +5,9 @@ Tool idea:
 - feed the obtained data to the GitHub Models LLM to generate a conventional commit message
 - display the generated commit message on the screen
 - if it works well, we can provide several previous commit messages as examples for the model
+
+## Usage
+
+```bash
+commitmsg --language russian
+```

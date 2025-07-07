@@ -24,6 +24,7 @@ type PromptConfig struct {
 	Name            string          `yaml:"name"`
 	Description     string          `yaml:"description"`
 	Model           string          `yaml:"model"`
+	Language        string          `yaml:"language"`
 	ModelParameters ModelParameters `yaml:"modelParameters"`
 	Messages        []PromptMessage `yaml:"messages"`
 }
@@ -87,7 +88,7 @@ func NewClient() (*Client, error) {
 }
 
 // GenerateCommitMessage generates a commit message based on the provided changes summary
-func (c *Client) GenerateCommitMessage(changesSummary string) (string, error) {
+func (c *Client) GenerateCommitMessage(changesSummary string, language string) (string, error) {
 	fmt.Print("  Loading prompt configuration... ")
 	promptConfig, err := loadPromptConfig()
 	if err != nil {
@@ -97,13 +98,18 @@ func (c *Client) GenerateCommitMessage(changesSummary string) (string, error) {
 	fmt.Println("Done")
 
 	selectedModel := promptConfig.Model
+	selectedLanguage := language
+	if selectedLanguage == "" {
+		selectedLanguage = promptConfig.Language
+	}
 
 	// Build messages from the prompt config, replacing template variables
 	messages := make([]Message, len(promptConfig.Messages))
 	for i, msg := range promptConfig.Messages {
 		content := msg.Content
-		// Replace the {{changes}} template variable
+		// Replace the template variables
 		content = strings.ReplaceAll(content, "{{changes}}", changesSummary)
+		content = strings.ReplaceAll(content, "{{language}}", selectedLanguage)
 
 		messages[i] = Message{
 			Role:    msg.Role,
