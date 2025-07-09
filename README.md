@@ -34,6 +34,10 @@ gh auth refresh -h github.com -s read:org
 Generate a commit message for the staged changes:
 
 ```bash
+# Stage changes in git repo
+git add .
+
+# Generate commit message
 gh commitmsg
 ```
 
@@ -43,6 +47,23 @@ gh commitmsg
 # Use different language
 gh commitmsg --language russian
 
-# Use previous 3 commit messages as context
+# Use previous 3 commit messages as an example for LLM
 gh commitmsg --examples
 ```
+
+### Output examples
+
+LLM will generate something like:
+
+```
+feat: add CI/CD workflows, license, and update project details
+
+- Introduced .github/workflows/ci.yml:
+  - Added CI pipeline for testing, building, and artifact upload.
+  - Configured matrix builds for multiple OS/architectures.
+- Added .github/workflows/release.yml:
+  - Automated release process triggered by version tags.
+  - Builds binaries for Linux, macOS, and Windows.
+```
+
+For more examples, [see commit messages in this repo](https://github.com/hazadus/gh-commitmsg/commits/main/).
