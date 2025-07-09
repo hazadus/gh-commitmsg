@@ -53,7 +53,7 @@ gh commitmsg --language russian
 gh commitmsg --examples
 
 # Use a different AI model
-gh standup --model xai/grok-3-mini
+gh commitmsg --model xai/grok-3-mini
 ```
 
 ### Output examples
