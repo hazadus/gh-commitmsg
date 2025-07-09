@@ -23,8 +23,6 @@ var commitmsgPromptYAML []byte
 type PromptConfig struct {
 	Name            string          `yaml:"name"`
 	Description     string          `yaml:"description"`
-	Model           string          `yaml:"model"`
-	Language        string          `yaml:"language"`
 	ModelParameters ModelParameters `yaml:"modelParameters"`
 	Messages        []PromptMessage `yaml:"messages"`
 }
@@ -90,6 +88,7 @@ func NewClient() (*Client, error) {
 // GenerateCommitMessage generates a commit message based on the provided changes summary
 func (c *Client) GenerateCommitMessage(
 	changesSummary string,
+	model string,
 	language string,
 	examples string,
 ) (string, error) {
@@ -101,11 +100,8 @@ func (c *Client) GenerateCommitMessage(
 	}
 	fmt.Println("Done")
 
-	selectedModel := promptConfig.Model
+	selectedModel := model
 	selectedLanguage := language
-	if selectedLanguage == "" {
-		selectedLanguage = promptConfig.Language
-	}
 
 	// Build messages from the prompt config, replacing template variables
 	messages := make([]Message, len(promptConfig.Messages))

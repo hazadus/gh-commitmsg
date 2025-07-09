@@ -43,12 +43,17 @@ gh commitmsg
 
 ### Advanced Options
 
+You can use and combine different options:
+
 ```bash
 # Use different language
 gh commitmsg --language russian
 
 # Use previous 3 commit messages as an example for LLM
 gh commitmsg --examples
+
+# Use a different AI model
+gh standup --model xai/grok-3-mini
 ```
 
 ### Output examples

@@ -1,7 +1,5 @@
 name: Commit Message Generator
 description: Generates professional commit messages based on git changes
-model: openai/gpt-4o
-language: english
 messages:
   - role: system
     content: >

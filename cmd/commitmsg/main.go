@@ -15,6 +15,7 @@ const extensionName = "commitmsg"
 var (
 	flagLanguage string
 	flagExamples bool
+	flagModel string
 )
 var rootCmd = &cobra.Command{
 	Use:   extensionName,
@@ -26,6 +27,7 @@ var rootCmd = &cobra.Command{
 func init() {
 	rootCmd.Flags().StringVarP(&flagLanguage, "language", "l", "english", "Language to generate commit message in")
 	rootCmd.Flags().BoolVarP(&flagExamples, "examples", "e", false, "Add examples of commit messages to context")
+	rootCmd.Flags().StringVarP(&flagModel, "model", "m", "openai/gpt-4o", "GitHub Models model to use")
 }
 
 func main() {
@@ -61,7 +63,7 @@ func runCommitMsg(_ *cobra.Command, _ []string) error {
 	}
 
 	fmt.Println("  Language for commit message:", flagLanguage)
-	commitMsg, err := llmClient.GenerateCommitMessage(stagedChanges, flagLanguage, latestCommitMessages)
+	commitMsg, err := llmClient.GenerateCommitMessage(stagedChanges, flagModel, flagLanguage, latestCommitMessages)
 	if err != nil {
 		return fmt.Errorf("failed to generate commit message: %w", err)
 	}
