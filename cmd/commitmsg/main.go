@@ -1,4 +1,4 @@
-// CLI tool to get staged changes in a git repository and print them to the console
+// CLI tool to generate AI-powered commit messages based on staged changes.
 package main
 
 import (
@@ -48,8 +48,9 @@ func runCommitMsg(_ *cobra.Command, _ []string) error {
 		return nil
 	}
 
+	// Add examples of previous commit messages to context if the flag is set
 	latestCommitMessages := ""
-	if flagExamples{
+	if flagExamples {
 		latestCommitMessages, err = git.GetCommitMessages(3)
 		if err != nil {
 			return fmt.Errorf("failed to get latest commit messages: %w", err)

@@ -18,8 +18,7 @@ import (
 //go:embed commitmsg.prompt.yml
 var commitmsgPromptYAML []byte
 
-// PromptConfig represents the structure of the prompt configuration file
-// It includes the model parameters and the messages to be sent to the model.
+// PromptConfig represents the structure of the prompt configuration file.
 type PromptConfig struct {
 	Name            string          `yaml:"name"`
 	Description     string          `yaml:"description"`
@@ -27,19 +26,19 @@ type PromptConfig struct {
 	Messages        []PromptMessage `yaml:"messages"`
 }
 
-// ModelParameters defines the parameters for the model
+// ModelParameters defines the parameters for the large language model.
 type ModelParameters struct {
 	Temperature float64 `yaml:"temperature"`
 	TopP        float64 `yaml:"topP"`
 }
 
-// PromptMessage represents a single message in the prompt configuration
+// PromptMessage represents a single message in the prompt configuration.
 type PromptMessage struct {
 	Role    string `yaml:"role"`
 	Content string `yaml:"content"`
 }
 
-// Request represents the structure of the request to the GitHub Models API
+// Request represents the request payload for the GitHub Models API.
 type Request struct {
 	Messages    []Message `json:"messages"`
 	Model       string    `json:"model"`
@@ -48,13 +47,13 @@ type Request struct {
 	Stream      bool      `json:"stream"`
 }
 
-// Message represents a single message in the request to the GitHub Models API
+// Message represents a single message in the request payload.
 type Message struct {
 	Role    string `json:"role"`
 	Content string `json:"content"`
 }
 
-// Response represents the structure of the response from the GitHub Models API
+// Response represents the response payload from the GitHub Models API.
 type Response struct {
 	Choices []struct {
 		Message struct {
@@ -68,8 +67,8 @@ type Client struct {
 	token string
 }
 
-// NewClient initializes a new GitHub Models API client
-// It retrieves the GitHub token from the environment installed by the `gh` CLI tool.
+// NewClient initializes a new GitHub Models API client.
+// It retrieves the GitHub token using gh auth token command.
 func NewClient() (*Client, error) {
 	fmt.Print("  Checking GitHub token... ")
 
@@ -100,6 +99,7 @@ func (c *Client) GenerateCommitMessage(
 	}
 	fmt.Println("Done")
 
+	// Build messages from the prompt config, replacing template variables
 	selectedModel := model
 	selectedLanguage := language
 
@@ -125,6 +125,7 @@ func (c *Client) GenerateCommitMessage(
 		}
 	}
 
+	// Prepare the request for the GitHub Models API
 	request := Request{
 		Messages:    messages,
 		Model:       selectedModel,
@@ -141,6 +142,7 @@ func (c *Client) GenerateCommitMessage(
 	}
 	fmt.Println("Done")
 
+	// Extract the generated commit message from the response
 	if len(response.Choices) == 0 {
 		return "", fmt.Errorf("no response generated from the model")
 	}

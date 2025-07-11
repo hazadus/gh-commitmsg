@@ -6,7 +6,7 @@ import (
 	"os/exec"
 )
 
-// GetStagedChanges executes the command git diff --staged and returns its output
+// GetStainedChanges returns the staged changes (git diff --staged) as a string.
 func GetStagedChanges() (string, error) {
 	// Check if we are in a git repository
 	if !isGitRepository() {
@@ -23,7 +23,7 @@ func GetStagedChanges() (string, error) {
 	return string(output), nil
 }
 
-// GetCommitMessages retrieves the last <count> commit messages from the git repository
+// GetCommitMessages retrieves the last <count> commit messages from the git repository.
 func GetCommitMessages(count int) (string, error) {
 	// Check if we are in a git repository
 	if !isGitRepository() {
