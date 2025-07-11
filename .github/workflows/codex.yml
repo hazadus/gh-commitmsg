@@ -27,9 +27,24 @@ jobs:
       - name: Install Codex CLI
         run: npm install -g @openai/codex
 
+      - name: Configure Codex for GitHub Models
+        run: |
+          mkdir -p ~/.codex
+          cat > ~/.codex/config.toml << 'EOF'
+          model = "openai/gpt-4.1"
+          model_provider = "github-models"
+          approval_policy = "never"
+          
+          [model_providers.github-models]
+          name = "GitHub Models"
+          base_url = "https://models.github.ai/inference"
+          env_key = "GITHUB_TOKEN"
+          wire_api = "chat"
+          EOF
+
       - name: Process issue with Codex
         env:
-          OPENAI_API_KEY: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ISSUE_BODY: ${{ github.event.issue.body }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
           ISSUE_TITLE: ${{ github.event.issue.title }}
@@ -40,10 +55,8 @@ jobs:
           BRANCH_NAME="codex/issue-$ISSUE_NUMBER"
           git checkout -b $BRANCH_NAME
 
-          export OPENAI_BASE_URL=https://models.github.ai/inference
-
-          # any provider string would work here, it's just so codex knows it's using a custom model
-          codex --profile github --model openai/gpt-4.1 --full-auto "$INSTRUCTION"
+          # Use the configured GitHub Models provider
+          codex --full-auto "$INSTRUCTION"
           
           if [[ -n $(git status --porcelain) ]]; then
             git config user.name "GitHub Models Codex Bot"
