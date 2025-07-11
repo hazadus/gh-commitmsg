@@ -56,7 +56,7 @@ jobs:
           git checkout -b $BRANCH_NAME
 
           # Use the configured GitHub Models provider
-          codex --full-auto "$INSTRUCTION"
+          codex exec "$INSTRUCTION"
           
           if [[ -n $(git status --porcelain) ]]; then
             git config user.name "GitHub Models Codex Bot"
