@@ -179,7 +179,7 @@ func (c *Client) callGitHubModels(request Request) (*Response, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to make request: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -203,6 +203,6 @@ func createExamplesString(examples string) string {
 	if examples == "" {
 		return ""
 	}
-	
+
 	return fmt.Sprintf("Here are some examples of good commit messages used previously in project:\n%s", examples)
 }

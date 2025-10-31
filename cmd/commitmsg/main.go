@@ -4,30 +4,53 @@ package main
 import (
 	"fmt"
 	"os"
+	"strconv"
 
 	"github.com/hazadus/gh-commitmsg/internal/git"
 	"github.com/hazadus/gh-commitmsg/internal/llm"
 	"github.com/spf13/cobra"
 )
 
-const extensionName = "commitmsg"
+const (
+	extensionName = "commitmsg"
+	maxExamples   = 20
+)
 
 var (
 	flagLanguage string
-	flagExamples bool
-	flagModel string
+	flagExamples string
+	flagModel    string
 )
 var rootCmd = &cobra.Command{
 	Use:   extensionName,
 	Short: "Generate AI-powered commit messages",
 	Long:  "A GitHub CLI extension that generates commit messages using GitHub Models and git repo data",
 	RunE:  runCommitMsg,
+	Args:  handleArgs,
 }
 
 func init() {
 	rootCmd.Flags().StringVarP(&flagLanguage, "language", "l", "english", "Language to generate commit message in")
-	rootCmd.Flags().BoolVarP(&flagExamples, "examples", "e", false, "Add examples of commit messages to context")
+	rootCmd.Flags().StringVarP(&flagExamples, "examples", "e", "", "Add N examples of commit messages to context (default 3 if flag is set without value, max 20)")
+	rootCmd.Flags().Lookup("examples").NoOptDefVal = "3"
 	rootCmd.Flags().StringVarP(&flagModel, "model", "m", "openai/gpt-4o", "GitHub Models model to use")
+}
+
+// handleArgs processes positional arguments to support --examples N syntax
+func handleArgs(cmd *cobra.Command, args []string) error {
+	// If --examples was set to its NoOptDefVal and there's a positional arg, use it
+	if flagExamples == "3" && len(args) == 1 {
+		// Check if examples flag was actually set
+		if cmd.Flags().Changed("examples") {
+			flagExamples = args[0]
+			return nil
+		}
+	}
+	// No positional arguments allowed normally
+	if len(args) > 0 {
+		return fmt.Errorf("unexpected argument: %s", args[0])
+	}
+	return nil
 }
 
 func main() {
@@ -42,20 +65,32 @@ func runCommitMsg(_ *cobra.Command, _ []string) error {
 	if err != nil {
 		return fmt.Errorf("failed to get staged changes: %w", err)
 	}
-	
+
 	if stagedChanges == "" {
 		fmt.Println("No staged changes in the repository.")
 		return nil
 	}
 
+	// Parse and validate examples count
+	examplesCount := 0
+	if flagExamples != "" {
+		examplesCount, err = strconv.Atoi(flagExamples)
+		if err != nil {
+			return fmt.Errorf("invalid examples count: %s", flagExamples)
+		}
+		if examplesCount < 1 || examplesCount > maxExamples {
+			return fmt.Errorf("examples count must be between 1 and %d", maxExamples)
+		}
+	}
+
 	// Add examples of previous commit messages to context if the flag is set
 	latestCommitMessages := ""
-	if flagExamples {
-		latestCommitMessages, err = git.GetCommitMessages(3)
+	if examplesCount > 0 {
+		latestCommitMessages, err = git.GetCommitMessages(examplesCount)
 		if err != nil {
 			return fmt.Errorf("failed to get latest commit messages: %w", err)
 		}
-		fmt.Println("  Adding examples of previous commit messages to context")
+		fmt.Printf("  Adding %d example(s) of previous commit messages to context\n", examplesCount)
 	}
 
 	llmClient, err := llm.NewClient()

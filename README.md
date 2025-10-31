@@ -2,7 +2,9 @@
 
 Based on [gh-standup](https://github.com/sgoedecke/gh-standup) by Sean Goedecke.
 
-A GitHub CLI extension that generates AI-powered commit messages using staged git changes from current repository. It uses free [GitHub Models](https://docs.github.com/en/github-models) for inference, so you don't need to do any token setup - your existing GitHub CLI token will do fine!
+A GitHub CLI extension that generates AI-powered [conventional commit](https://www.conventionalcommits.org/en/v1.0.0/#summary) messages using staged git changes from current repository. It uses free [GitHub Models](https://docs.github.com/en/github-models) for inference, so you don't need to do any token setup - your existing GitHub CLI token will do fine!
+
+If you find this utility useful, check my another tool – [gh-repomon](https://github.com/hazadus/gh-repomon).
 
 ## Installation
 
@@ -49,8 +51,11 @@ You can use and combine different options:
 # Use different language
 gh commitmsg --language russian
 
-# Use previous 3 commit messages as an example for LLM
+# Use previous commit messages as examples for LLM (default: 3, max: 20)
 gh commitmsg --examples
+
+# Or specify custom number of examples
+gh commitmsg --examples 5
 
 # Use a different AI model
 gh commitmsg --model xai/grok-3-mini
