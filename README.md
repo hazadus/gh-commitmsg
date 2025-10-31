@@ -61,6 +61,13 @@ gh commitmsg --examples 5
 gh commitmsg --model xai/grok-3-mini
 ```
 
+### Upgrading Extension to Latest Version
+
+```bash
+# Use to upgrade commitmsg to latest version
+gh extension upgrade commitmsg
+```
+
 ### Output examples
 
 LLM will generate something like:
