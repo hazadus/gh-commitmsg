@@ -9,3 +9,6 @@ format:
 
 lint:
   golangci-lint run ./...
+
+commitmsg:
+  gh commitmsg --examples
